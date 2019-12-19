@@ -8,6 +8,7 @@
   "dependencies": {
     "bcrypt": "^3.0.7",
     "cors": "^2.8.5",
+    "cross-env": "^6.0.3",
     "dotenv": "^8.2.0",
     "express": "^4.17.1",
     "helmet": "^3.21.2",
@@ -16,10 +17,22 @@
     "morgan": "^1.9.1",
     "pg": "^7.15.1"
   },
-   "scripts": {
+  "scripts": {
+    "test":"cross-env DB_ENV=test jest --watch",
+    "test-migration":"knex migrate:latest --env=testing",
+    "test-seed":"knex seed:run --env=testing",
     "start": "node index.js",
+    "server":"nodemon index.js",
     "migrate": "knex migrate:latest",
     "rollback": "knex migrate:rollback",
     "run-seeds": "knex seed:run "
+  },
+  "devDependencies": {
+    "jest": "^24.9.0",
+    "nodemon": "^2.0.2",
+    "supertest": "^4.0.2"
+  },
+  "jest": {
+    "testEnvirnoment": "node"
   }
 }

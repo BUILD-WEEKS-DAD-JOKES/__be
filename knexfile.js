@@ -1,12 +1,11 @@
-require('dotenv').config()
 module.exports = {
 
   development: {
     client: 'pg',
     connection: {
-      database:'dadjokes',
-      user:'postgres',
-      password:'Neverzero124'
+      database:process.env.DB_DATABASE,
+      user:process.env.DB_USER,
+      password:process.env.DB_PASSWORD
     },
       pool: {
       min: 2,
@@ -22,9 +21,9 @@ module.exports = {
   testing: {
     client: 'pg',
     connection: {
-      database:'dadjokes-testing',
-      user:'postgres',
-      password:'Neverzero124'
+      database:process.env.DB_DATABASE,
+      user:process.env.DB_USER,
+      password:process.env.DB_PASSWORD
     },
       pool: {
       min: 2,
