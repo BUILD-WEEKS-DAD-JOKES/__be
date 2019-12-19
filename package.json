@@ -15,14 +15,15 @@
     "jsonwebtoken": "^8.5.1",
     "knex": "^0.20.4",
     "morgan": "^1.9.1",
-    "pg": "^7.15.1"
+    "pg": "^7.15.1",
+    "sqlite3": "^4.1.1"
   },
   "scripts": {
-    "test":"cross-env DB_ENV=test jest --watch",
-    "test-migration":"knex migrate:latest --env=testing",
-    "test-seed":"knex seed:run --env=testing",
+    "test": "cross-env DB_ENV=testing jest --watch",
+    "test-migration": "knex migrate:latest --env=testing",
+    "test-seed": "knex seed:run --env=testing",
     "start": "node index.js",
-    "server":"nodemon index.js",
+    "server": "nodemon index.js",
     "migrate": "knex migrate:latest",
     "rollback": "knex migrate:rollback",
     "run-seeds": "knex seed:run "
@@ -33,6 +34,6 @@
     "supertest": "^4.0.2"
   },
   "jest": {
-    "testEnvirnoment": "node"
+    "testEnvironment": "node"
   }
 }
