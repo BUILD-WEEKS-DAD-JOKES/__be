@@ -1,0 +1,6 @@
+# ignore huge node packages...
+node_modules/
+# ignore log files and databases...
+*.db3
+# ignore enviorment vars..
+.env
