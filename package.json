@@ -21,6 +21,7 @@
   "scripts": {
     "test": "cross-env DB_ENV=testing jest --watch",
     "test-migration": "knex migrate:latest --env=testing",
+    "test-rollback": "knex migrate:rollback --env=testing",
     "test-seed": "knex seed:run --env=testing",
     "start": "node index.js",
     "server": "nodemon index.js",
