@@ -1,6 +1,6 @@
-const db = require('../../data/dbConfig.js')
-const Users = require('../../models/auth-model')
-const {mock_user_1, mock_user_2, mock_user_3} = require('../mock_data')
+const db = require('../data/dbConfig.js')
+const Users = require('../models/auth-model')
+const {mock_user_1, mock_user_2, mock_user_3} = require('./mock_data')
 // the users model should be able to:
 /* 
 *   insert(user)
@@ -98,3 +98,5 @@ describe('users model()', () => {
         })
     })
 })
+
+

@@ -1,14 +1,14 @@
 const mock_user_1 = {
-    username: 'DandyDad204',
-    password: 'Dadword123'
+    username: 'IronMan',
+    password: 'IAmIronMan'
 }
 const mock_user_2 = {
-    username: 'DandyDad205',
-    password: 'Dadword123'
+    username: 'Thor',
+    password: 'GodOfThunder'
 }
 const mock_user_3 = {
-    username: 'DandyDad206',
-    password: 'Dadword123'
+    username: 'Rocket',
+    password: 'M3chanic'
 }
 
 module.exports = {

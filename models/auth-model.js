@@ -10,7 +10,7 @@ module.exports = {
 function find(username){
     let query = db('user')
     if(username){
-        query = db('user').where({username}).first()
+        query = db('user').where({ username }).first()
     }
     return query
 }
