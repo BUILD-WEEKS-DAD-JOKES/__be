@@ -7,10 +7,10 @@ const server = express()
 const authRouter = require('./routes/auth/auth-router')
 
 // --middleware--
-server.use(helmet())
-server.use(morgan('combined'))
 server.use(express.json())
 server.use(cors())
+server.use(helmet())
+server.use(morgan('combined'))
 
 server.use('/auth', authRouter)
 
