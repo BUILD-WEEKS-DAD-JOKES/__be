@@ -38,8 +38,8 @@ router.post('/', privateRoute, (req, res) => {
             } else {
                 res.status(201).json({ messege: 'Joke has been Created Successfully!' })
             }
-        }).catch(() => {
-            res.status(500).json({ messege: 'something went terribly wrong... contact the author' })
+        }).catch((_err) => {
+            res.status(500).json({ messege: 'something went terribly wrong... contact the author',_err })
         })
 })
 
