@@ -11,8 +11,8 @@ router.get('/', (req, res) => {
         } else {
             res.status(200).json(_joke)
         }
-    }).catch(() => {
-        res.status(500).json({ messege: 'something went terribly wrong... contact the author' })
+    }).catch((_err) => {
+        res.status(500).json({ messege: 'something went terribly wrong... contact the author', _err })
 
     })
 })
