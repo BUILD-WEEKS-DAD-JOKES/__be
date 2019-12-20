@@ -2,12 +2,12 @@ const req = require('supertest')
 const db = require('../data/dbConfig')
 const server = require('../server')
 const Users = require('../models/auth-model')
+const Jokes = require('../models/joke-model')
 
 beforeEach(async () => {
-    console.log('clearing...')
+
     await db('user').truncate();
 });
-
 
 //#region  -- AUTH ROUTES --
 describe('/auth/register ==> can register a user', () => {
@@ -82,7 +82,6 @@ describe('auth/login  ==> can login a user!', () => {
 
 })
 //#endregion -- AUTH ROUTES --
-
 
 //#region -- USER MODEL / AUTH MODEL -- 
 // the users model should be able to:
@@ -226,7 +225,7 @@ describe('update(id, changes)', () => {
         const mock_id = 3
         const update = await Users.update(mock_id, mock_changes)
         const users = await Users.find()
-        console.log(users[mock_id - 1])
+
         expect(users[mock_id - 1].username).toEqual(mock_changes.username)
 
     })
@@ -260,10 +259,8 @@ describe('delete(id)', () => {
 
 //#endregion -- USER MODEL / AUTH MODEL --
 
-
-const Jokes = require('../models/joke-model')
-
-describe('jokes model', () => {
+//#region  -- JOKE MODEL --
+describe('JOKES :: add()', () => {
     it('can add the given joke to the database', async () => {
         const mock_user = {
             username: 'DankDaddy01',
@@ -285,6 +282,8 @@ describe('jokes model', () => {
         expect(jokes.length).toEqual(1)
 
     })
+})
+describe('JOKES :: remove()', () => {
     it('a user can delete a joke after they create it', async () => {
         const mock_user = {
             username: 'DankDaddy01',
@@ -307,11 +306,13 @@ describe('jokes model', () => {
 
         await Jokes.remove(jokes[0].id)
         jokes = await db('joke')
-        console.log(jokes)
+
         expect(jokes.length).toEqual(0)
 
 
     })
+})
+describe('JOKES :: update()', () => {
     it('a user can update a joke after they create it', async () => {
         const mock_user = {
             username: 'DankDaddy01',
@@ -331,7 +332,7 @@ describe('jokes model', () => {
         await Jokes.add(mock_joke_1)
         let jokes = await db('joke')
         expect(jokes.length).toEqual(1)
-        
+
         const mock_joke_changes = {
             question: 'whats the name of someone who steals your lunch??',
             answer: 'Hungry!!',
@@ -339,10 +340,12 @@ describe('jokes model', () => {
         }
         await Jokes.update(jokes[0].id, mock_joke_changes)
         jokes = await db('joke')
-        console.log('JOKES::::::: ', jokes)
+
         expect(jokes[0].question).toEqual(mock_joke_changes.question)
         expect(jokes[0].answer).toEqual(mock_joke_changes.answer)
     })
+})
+describe('JOKES :: find()', () => {
     it('a user can find all jokes after they create it', async () => {
         const mock_user = {
             username: 'DankDaddy01',
@@ -378,6 +381,8 @@ describe('jokes model', () => {
         expect(actual_jokes.length).toBe(3)
 
     })
+})
+describe('JOKES :: findPublic()', () => {
     it('a user can find only public jokes after they create some', async () => {
         const mock_user = {
             username: 'DankDaddy01',
@@ -392,7 +397,7 @@ describe('jokes model', () => {
             question: 'whats the name of someone who steals your lunch?',
             answer: 'hungry',
             joke_owner: 1,
-            public:false
+            public: false
         }
         const mock_joke_2 = {
             question: 'whats the name of someone who steals your Dinenr?',
@@ -415,42 +420,507 @@ describe('jokes model', () => {
 
     })
 })
+//#endregion
 
-// describe('joke router', () => {
-//     it('POST :: /api/jokes', async () => {
-//         //first we have to create a user in the database that can then add a joke... 
-//         const mock_user = {
-//             username:'DankDaddy01',
-//             password:'Som3Dad24!'
-//         }
-//         //send the reqest to register mock_user
-//         let res = await req(server).post('/auth/register').send(mock_user)
-//         //make sure its a good request
-//         expect(res.status).toEqual(201)
-//         //now we have to login before we can create a joke.. only 
-//         const mock_login = {
-//             username:'DankDaddy01',
-//             password:'Som3Dad24!'            
-//         }
-//         //send the request to login.. 
-//         res = await req(server).post('/auth/login').send(mock_login)
-//         //check that it was a good request...
-//         expect(res.status).toBe(200)
-//         //store the token that the mock gave us
-//         const token = res.body.token
-//         //make sure token is long..
-//         expect(token.length).toBeGreaterThan(12)
+//#region  -- JOKE ROUTES
+describe('POST :: /api/jokes', () => {
+    it('will return 201 on a good request', async () => {
+        //first we have to create a user in the database that can then add a joke... 
+        const mock_user = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the reqest to register mock_user
+        let res = await req(server).post('/auth/register').send(mock_user)
+        //make sure its a good request
+        expect(res.status).toEqual(201)
+        //now we have to login before we can create a joke.. only 
+        const mock_login = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the request to login.. 
+        res = await req(server).post('/auth/login').send(mock_login)
+        //check that it was a good request...
+        expect(res.status).toBe(200)
+        //store the token that the mock gave us
+        const token = res.body.token
+        //make sure token is long..
+        expect(token.length).toBeGreaterThan(12)
 
-//         // now that we're authorized we can send that joke we want to add...
-//         //here it is
-//         const mock_joke_1 = {
-//             question:'whats the name of someone who steals your lunch?',
-//             answer:'hungry',
-//             joke_owner:1
-//         }
-//         //send the request to add the joke to the database with the authorization we need...
-//         res = await req(server).post('/api/jokes').set({Authorization:token}).send(mock_joke)
-//         //now that we added it to the database we expect that we get a 201 created response
-//         expect(res.status).toEqual(201)
-//     })
-// })
+        // now that we're authorized we can send that joke we want to add...
+        //here it is
+        const mock_joke_1 = {
+            question: 'whats the name of someone who steals your lunch?',
+            answer: 'hungry',
+            joke_owner: 1
+        }
+        //send the request to add the joke to the database with the authorization we need...
+        res = await req(server).post('/api/jokes').set({ Authorization: token }).send(mock_joke_1)
+        //now that we added it to the database we expect that we get a 201 created response
+        expect(res.status).toEqual(201)
+    })
+    it('will give a Confirm messege on Creating a Joke', async () => {
+        //first we have to create a user in the database that can then add a joke... 
+        const mock_user = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the reqest to register mock_user
+        let res = await req(server).post('/auth/register').send(mock_user)
+        //make sure its a good request
+        expect(res.status).toEqual(201)
+        //now we have to login before we can create a joke.. only 
+        const mock_login = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the request to login.. 
+        res = await req(server).post('/auth/login').send(mock_login)
+        //check that it was a good request...
+        expect(res.status).toBe(200)
+        //store the token that the mock gave us
+        const token = res.body.token
+        //make sure token is long..
+        expect(token.length).toBeGreaterThan(12)
+
+        // now that we're authorized we can send that joke we want to add...
+        //here it is
+        const mock_joke_1 = {
+            question: 'whats the name of someone who steals your lunch?',
+            answer: 'hungry',
+            joke_owner: 1
+        }
+        //send the request to add the joke to the database with the authorization we need...
+        res = await req(server).post('/api/jokes').set({ Authorization: token }).send(mock_joke_1)
+        //now that we added it to the database we expect that we get a 201 created response
+        expect(res.body).toEqual({ messege: 'Joke has been Created Successfully!' })
+    })
+})
+
+describe('GET :: /api/jokes', () => {
+    it('will return 200 on a good request to get PUBLIC jokes', async () => {
+        //first we have to create a user in the database that can then add a joke... 
+        const mock_user = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the reqest to register mock_user
+        let res = await req(server).post('/auth/register').send(mock_user)
+        //make sure its a good request
+        expect(res.status).toEqual(201)
+
+        // now that we're authorized we can send that joke we want to add...
+        //here it is
+        const mock_joke_1 = {
+            question: 'whats the name of someone who steals your lunch?',
+            answer: 'hungry',
+            joke_owner: 1,
+            public: false
+        }
+        const mock_joke_2 = {
+            question: 'whats the name of someone who steals your Dinenr?',
+            answer: 'Starving',
+            joke_owner: 1
+        }
+        const mock_joke_3 = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'a King',
+            joke_owner: 1
+        }
+        await Jokes.add(mock_joke_1)
+        await Jokes.add(mock_joke_2)
+        await Jokes.add(mock_joke_3)
+        //send the request to add the joke to the database with the authorization we need...
+        res = await req(server).get('/api/jokes')
+        //now that we added it to the database we expect that we get a 201 created response
+        expect(res.status).toEqual(200)
+    })
+    it('will give only The PUBLIC tagged jokes', async () => {
+        //first we have to create a user in the database that can then add a joke... 
+        const mock_user = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the reqest to register mock_user
+        let res = await req(server).post('/auth/register').send(mock_user)
+        //make sure its a good request
+        expect(res.status).toEqual(201)
+
+        const mock_joke_1 = {
+            question: 'whats the name of someone who steals your lunch?',
+            answer: 'hungry',
+            joke_owner: 1,
+            public: false
+        }
+        const mock_joke_2 = {
+            question: 'whats the name of someone who steals your Dinenr?',
+            answer: 'Starving',
+            joke_owner: 1
+        }
+        const mock_joke_3 = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'a King',
+            joke_owner: 1
+        }
+        await Jokes.add(mock_joke_1)
+        await Jokes.add(mock_joke_2)
+        await Jokes.add(mock_joke_3)
+        //send the request to add the joke to the database with the authorization we need...
+        res = await req(server).get('/api/jokes')
+        //now that we added it to the database we expect that we get a 201 created response
+        expect(res.body.length).toEqual(2)
+    })
+})
+
+describe('GET :: /api/jokes/all', () => {
+    it('will return 200 on a good request to get ALL jokes', async () => {
+        //first we have to create a user in the database that can then add a joke... 
+        const mock_user = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the reqest to register mock_user
+        let res = await req(server).post('/auth/register').send(mock_user)
+        //make sure its a good request
+        expect(res.status).toEqual(201)
+        //now we have to login before we can create a joke.. only 
+        const mock_login = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the request to login.. 
+        res = await req(server).post('/auth/login').send(mock_login)
+        //check that it was a good request...
+        expect(res.status).toBe(200)
+        //store the token that the mock gave us
+        const token = res.body.token
+        //make sure token is long..
+        expect(token.length).toBeGreaterThan(12)
+
+        // now that we're authorized we can send that joke we want to add...
+        //here it is
+        const mock_joke_1 = {
+            question: 'whats the name of someone who steals your lunch?',
+            answer: 'hungry',
+            joke_owner: 1,
+            public: false
+        }
+        const mock_joke_2 = {
+            question: 'whats the name of someone who steals your Dinenr?',
+            answer: 'Starving',
+            joke_owner: 1
+        }
+        const mock_joke_3 = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'a King',
+            joke_owner: 1
+        }
+        await Jokes.add(mock_joke_1)
+        await Jokes.add(mock_joke_2)
+        await Jokes.add(mock_joke_3)
+        //send the request to add the joke to the database with the authorization we need...
+        res = await req(server).get('/api/jokes/all').set({ Authorization: token })
+        //now that we added it to the database we expect that we get a 201 created response
+        expect(res.status).toEqual(200)
+    })
+    it('will give ALL jokes', async () => {
+        //first we have to create a user in the database that can then add a joke... 
+        const mock_user = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the reqest to register mock_user
+        let res = await req(server).post('/auth/register').send(mock_user)
+        //make sure its a good request
+        expect(res.status).toEqual(201)
+        //now we have to login before we can create a joke.. only 
+        const mock_login = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the request to login.. 
+        res = await req(server).post('/auth/login').send(mock_login)
+        //check that it was a good request...
+        expect(res.status).toBe(200)
+        //store the token that the mock gave us
+        const token = res.body.token
+        //make sure token is long..
+        expect(token.length).toBeGreaterThan(12)
+
+        // now that we're authorized we can send that joke we want to add...
+        //here it is
+        const mock_joke_1 = {
+            question: 'whats the name of someone who steals your lunch?',
+            answer: 'hungry',
+            joke_owner: 1,
+            public: false
+        }
+        const mock_joke_2 = {
+            question: 'whats the name of someone who steals your Dinenr?',
+            answer: 'Starving',
+            joke_owner: 1
+        }
+        const mock_joke_3 = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'a King',
+            joke_owner: 1
+        }
+        await Jokes.add(mock_joke_1)
+        await Jokes.add(mock_joke_2)
+        await Jokes.add(mock_joke_3)
+        //send the request to add the joke to the database with the authorization we need...
+        res = await req(server).get('/api/jokes/all').set({ Authorization: token })
+        //now that we added it to the database we expect that we get a 201 created response
+        expect(res.body.length).toEqual(3)
+    })
+})
+
+describe('PUT :: /api/jokes/:id', () => {
+    it('will return 200 on a good update to joke/:id', async () => {
+        //first we have to create a user in the database that can then add a joke... 
+        const mock_user = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the reqest to register mock_user
+        let res = await req(server).post('/auth/register').send(mock_user)
+        //make sure its a good request
+        expect(res.status).toEqual(201)
+        //now we have to login before we can create a joke.. only 
+        const mock_login = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the request to login.. 
+        res = await req(server).post('/auth/login').send(mock_login)
+        //check that it was a good request...
+        expect(res.status).toBe(200)
+        //store the token that the mock gave us
+        const token = res.body.token
+        //make sure token is long..
+        expect(token.length).toBeGreaterThan(12)
+
+        // now that we're authorized we can send that joke we want to add...
+        //here it is
+        const mock_joke_1 = {
+            question: 'whats the name of someone who steals your lunch?',
+            answer: 'hungry',
+            joke_owner: 1,
+            public: false
+        }
+        const mock_joke_2 = {
+            question: 'whats the name of someone who steals your Dinenr?',
+            answer: 'Starving',
+            joke_owner: 1
+        }
+        const mock_joke_3 = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'a King',
+            joke_owner: 1
+        }
+        await Jokes.add(mock_joke_1)
+        await Jokes.add(mock_joke_2)
+        await Jokes.add(mock_joke_3)
+
+        const mock_changes = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'achKing',
+            joke_owner: 1,
+            public: false
+        }
+        const jokes = await Jokes.find()
+
+        //send the request to add the joke to the database with the authorization we need...
+        res = await req(server).put(`/api/jokes/${jokes[2].id}`).set({ Authorization: token }).send(mock_changes)
+        //now that we added it to the database we expect that we get a 201 created response
+        expect(res.status).toEqual(200)
+
+
+
+    })
+    it('will give confirm messege on Update of a joke', async () => {
+        //first we have to create a user in the database that can then add a joke... 
+        const mock_user = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the reqest to register mock_user
+        let res = await req(server).post('/auth/register').send(mock_user)
+        //make sure its a good request
+        expect(res.status).toEqual(201)
+        //now we have to login before we can create a joke.. only 
+        const mock_login = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the request to login.. 
+        res = await req(server).post('/auth/login').send(mock_login)
+        //check that it was a good request...
+        expect(res.status).toBe(200)
+        //store the token that the mock gave us
+        const token = res.body.token
+        //make sure token is long..
+        expect(token.length).toBeGreaterThan(12)
+
+        // now that we're authorized we can send that joke we want to add...
+        //here it is
+        const mock_joke_1 = {
+            question: 'whats the name of someone who steals your lunch?',
+            answer: 'hungry',
+            joke_owner: 1,
+            public: false
+        }
+        const mock_joke_2 = {
+            question: 'whats the name of someone who steals your Dinenr?',
+            answer: 'Starving',
+            joke_owner: 1
+        }
+        const mock_joke_3 = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'a King',
+            joke_owner: 1
+        }
+        await Jokes.add(mock_joke_1)
+        await Jokes.add(mock_joke_2)
+        await Jokes.add(mock_joke_3)
+
+        const mock_changes = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'achKing',
+            joke_owner: 1,
+            public: false
+        }
+
+        const jokes = await Jokes.find()
+        //send the request to add the joke to the database with the authorization we need...
+        res = await req(server).put(`/api/jokes/${jokes[2].id}`).set({ Authorization: token }).send(mock_changes)
+        //now that we updated it in the database we expect that we get a confirm Messege response
+        expect(res.body).toEqual({ messege: 'Joke has been updated Successfully!' })
+    })
+})
+
+describe('DELETE :: /api/jokes/:id', () => {
+    it('will return 200 on a good Delete to joke/:id', async () => {
+        //first we have to create a user in the database that can then add a joke... 
+        const mock_user = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the reqest to register mock_user
+        let res = await req(server).post('/auth/register').send(mock_user)
+        //make sure its a good request
+        expect(res.status).toEqual(201)
+        //now we have to login before we can create a joke.. only 
+        const mock_login = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the request to login.. 
+        res = await req(server).post('/auth/login').send(mock_login)
+        //check that it was a good request...
+        expect(res.status).toBe(200)
+        //store the token that the mock gave us
+        const token = res.body.token
+        //make sure token is long..
+        expect(token.length).toBeGreaterThan(12)
+
+        // now that we're authorized we can send that joke we want to add...
+        //here it is
+        const mock_joke_1 = {
+            question: 'whats the name of someone who steals your lunch?',
+            answer: 'hungry',
+            joke_owner: 1,
+            public: false
+        }
+        const mock_joke_2 = {
+            question: 'whats the name of someone who steals your Dinenr?',
+            answer: 'Starving',
+            joke_owner: 1
+        }
+        const mock_joke_3 = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'a King',
+            joke_owner: 1
+        }
+        await Jokes.add(mock_joke_1)
+        await Jokes.add(mock_joke_2)
+        await Jokes.add(mock_joke_3)
+
+        const mock_changes = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'achKing',
+            joke_owner: 1,
+            public: false
+        }
+        const jokes = await Jokes.find()
+
+        //send the request to add the joke to the database with the authorization we need...
+        res = await req(server).delete(`/api/jokes/${jokes[2].id}`).set({ Authorization: token }).send(mock_changes)
+        //now that we added it to the database we expect that we get a 201 created response
+        expect(res.status).toEqual(200)
+
+
+
+    })
+    it('will give confirm messege on Delete of a joke', async () => {
+        //first we have to create a user in the database that can then add a joke... 
+        const mock_user = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the reqest to register mock_user
+        let res = await req(server).post('/auth/register').send(mock_user)
+        //make sure its a good request
+        expect(res.status).toEqual(201)
+        //now we have to login before we can create a joke.. only 
+        const mock_login = {
+            username: 'DankDaddy01',
+            password: 'Som3Dad24!'
+        }
+        //send the request to login.. 
+        res = await req(server).post('/auth/login').send(mock_login)
+        //check that it was a good request...
+        expect(res.status).toBe(200)
+        //store the token that the mock gave us
+        const token = res.body.token
+        //make sure token is long..
+        expect(token.length).toBeGreaterThan(12)
+
+        // now that we're authorized we can send that joke we want to add...
+        //here it is
+        const mock_joke_1 = {
+            question: 'whats the name of someone who steals your lunch?',
+            answer: 'hungry',
+            joke_owner: 1,
+            public: false
+        }
+        const mock_joke_2 = {
+            question: 'whats the name of someone who steals your Dinenr?',
+            answer: 'Starving',
+            joke_owner: 1
+        }
+        const mock_joke_3 = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'a King',
+            joke_owner: 1
+        }
+        await Jokes.add(mock_joke_1)
+        await Jokes.add(mock_joke_2)
+        await Jokes.add(mock_joke_3)
+
+        const mock_changes = {
+            question: 'whats the name of someone who steals your breakfast?',
+            answer: 'achKing',
+            joke_owner: 1,
+            public: false
+        }
+
+        const jokes = await Jokes.find()
+        //send the request to add the joke to the database with the authorization we need...
+        res = await req(server).delete(`/api/jokes/${jokes[2].id}`).set({ Authorization: token }).send(mock_changes)
+        //now that we updated it in the database we expect that we get a confirm Messege response
+        expect(res.body).toEqual({ messege: 'Joke has been Deleted Successfully!' })
+    })
+})
+//#endregion
