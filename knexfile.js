@@ -4,20 +4,24 @@ module.exports = {
   development: {
     client: 'pg',
     connection: {
-      database:process.env.DB_DATABASE,
-      user:process.env.DB_USER,
-      password:process.env.DB_PASSWORD
+      database: process.env.DB_DATABASE,
+      user: process.env.DB_USER,
+      password: process.env.DB_PASSWORD
     },
-      pool: {
-      min: 2,
-      max: 10
+    pool: {
+      min:2,
+      max:10,
+      afterCreate: (conn, done) => {
+        conn.run('PRAGMA foreign_keys = ON', done);
+      }
     },
     migrations: {
       directory: './data/migrations'
     },
     seeds: {
       directory: './data/seeds'
-    }
+    },
+
   },
   testing: {
     client: 'sqlite3',
@@ -31,5 +35,10 @@ module.exports = {
     seeds: {
       directory: './data/seeds',
     },
+    pool: {
+      afterCreate: (conn, done) => {
+        conn.run('PRAGMA foreign_keys = ON', done);
+      }
+    }
   }
 };
