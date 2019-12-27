@@ -29,8 +29,14 @@ router.get('/all', privateRoute, (req, res) => {
 
     })
 })
-router.post('/', privateRoute, (req, res) => {
-    const joke = req.body
+//changed to a /:user_id so that we can add the id to the post request, and simplfy things on the front end
+router.post('/:user_id', privateRoute, (req, res) => {
+    let joke = req.body
+    const joke_owner = req.params.user_id
+    joke = {
+        ...joke,
+        joke_owner: joke_owner
+    }
     Jokes.add(joke)
         .then((_joke) => {
             if (!_joke) {
@@ -39,7 +45,7 @@ router.post('/', privateRoute, (req, res) => {
                 res.status(201).json({ messege: 'Joke has been Created Successfully!' })
             }
         }).catch((_err) => {
-            res.status(500).json({ messege: 'something went terribly wrong... contact the author',_err })
+            res.status(500).json({ messege: 'something went terribly wrong... contact the author', _err })
         })
 })
 
@@ -61,16 +67,16 @@ router.put('/:id', privateRoute, (req, res) => {
     const id = req.params.id
     const changes = req.body
     Jokes.update(id, changes)
-    .then((_joke)=>{
-        if (!_joke) {
-            res.status(404).json({ messege: 'sorry.. somethings mixed up... whomp whomp...' })
-        } else {
-            res.status(200).json({ messege: 'Joke has been updated Successfully!' })
-        }
-    })
-    .catch(()=>{
-        res.status(500).json({ messege: 'something went terribly wrong... contact the author' })
-    })
+        .then((_joke) => {
+            if (!_joke) {
+                res.status(404).json({ messege: 'sorry.. somethings mixed up... whomp whomp...' })
+            } else {
+                res.status(200).json({ messege: 'Joke has been updated Successfully!' })
+            }
+        })
+        .catch(() => {
+            res.status(500).json({ messege: 'something went terribly wrong... contact the author' })
+        })
 })
 
 
