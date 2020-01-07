@@ -30,9 +30,9 @@ router.get('/all', privateRoute, (req, res) => {
     })
 })
 //changed to a /:user_id so that we can add the id to the post request, and simplfy things on the front end
-router.post('/:user_id', privateRoute, (req, res) => {
+router.post('/:username', privateRoute, (req, res) => {
     let joke = req.body
-    const joke_owner = req.params.user_id
+    const joke_owner = req.params.username
     joke = {
         ...joke,
         joke_owner: joke_owner

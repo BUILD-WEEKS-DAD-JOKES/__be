@@ -32,14 +32,21 @@ router.post('/login', (req, res) => {
             if (_user && bcrypt.compareSync(password, _user.password)) {
 
                 const token = generateToken(_user)
-                res.status(200).json({ messege: 'Log in Success!', token })
+                res.status(200).json({
+                    messege: 'Log in Success!',
+                    token,
+                    logged_in_user: {
+                        user_id: _user.id,
+                        username: _user.username
+                    }
+                })
             } else {
                 res.status(400).json({ messege: 'Invalid Credentials... try again' })
             }
         })
         .catch((_err) => {
             console.log(_err)
-            res.status(500).json({ messege: 'an error has occurred' ,error:_err})
+            res.status(500).json({ messege: 'an error has occurred', error: _err })
         })
 })
 module.exports = router
