@@ -35,7 +35,7 @@ router.post('/:username', privateRoute, (req, res) => {
     const joke_owner = req.params.username
     joke = {
         ...joke,
-        joke_owner: joke_owner
+        joke_owner
     }
     Jokes.add(joke)
         .then((_joke) => {
@@ -45,7 +45,7 @@ router.post('/:username', privateRoute, (req, res) => {
                 res.status(201).json({ messege: 'Joke has been Created Successfully!' })
             }
         }).catch((_err) => {
-            res.status(500).json({ messege: 'something went terribly wrong... contact the author', _err })
+            res.status(500).json({ messege: 'something went terribly wrong... contact the author', _err, joke })
         })
 })
 
