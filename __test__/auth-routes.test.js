@@ -8,7 +8,7 @@ beforeEach(async () => {
 
     await db('user').truncate();
 });
-
+jest.setTimeout(1000 * 8);
 //#region  -- AUTH ROUTES --
 describe('/auth/register ==> can register a user', () => {
 
@@ -456,7 +456,7 @@ describe('POST :: /api/jokes', () => {
             joke_owner: 1
         }
         //send the request to add the joke to the database with the authorization we need...
-        res = await req(server).post('/api/jokes').set({ Authorization: token }).send(mock_joke_1)
+        res = await req(server).post(`/api/jokes/${mock_joke_1.joke_owner}`).set({ Authorization: token }).send(mock_joke_1)
         //now that we added it to the database we expect that we get a 201 created response
         expect(res.status).toEqual(201)
     })
@@ -492,7 +492,8 @@ describe('POST :: /api/jokes', () => {
             joke_owner: 1
         }
         //send the request to add the joke to the database with the authorization we need...
-        res = await req(server).post('/api/jokes').set({ Authorization: token }).send(mock_joke_1)
+        res = await req(server).post(`/api/jokes/${mock_joke_1.joke_owner}`).set({ Authorization: token }).send(mock_joke_1)
+
         //now that we added it to the database we expect that we get a 201 created response
         expect(res.body).toEqual({ messege: 'Joke has been Created Successfully!' })
     })

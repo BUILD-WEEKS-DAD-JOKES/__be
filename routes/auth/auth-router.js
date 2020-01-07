@@ -38,7 +38,8 @@ router.post('/login', (req, res) => {
             }
         })
         .catch((_err) => {
-            res.status(500).json({ messege: 'an error has occurred' })
+            console.log(_err)
+            res.status(500).json({ messege: 'an error has occurred' ,error:_err})
         })
 })
 module.exports = router

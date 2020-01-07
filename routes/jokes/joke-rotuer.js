@@ -56,7 +56,7 @@ router.delete('/:id', privateRoute, (req, res) => {
             if (!_joke) {
                 res.status(404).json({ messege: 'sorry.. joke doesnt exist with that id... whomp whomp...' })
             } else {
-                res.status(200).json({ messege: 'Joke has been Deleted Successfully!' })
+                res.status(200).json({ messege: 'Joke has been Deleted Successfully!', _joke})
             }
         }).catch(() => {
             res.status(500).json({ messege: 'something went terribly wrong... contact the author' })
