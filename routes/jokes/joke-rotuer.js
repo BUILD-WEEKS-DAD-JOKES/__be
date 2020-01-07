@@ -50,13 +50,13 @@ router.post('/:user_id', privateRoute, (req, res) => {
 })
 
 router.delete('/:id', privateRoute, (req, res) => {
-    const id = req.params.id
-    Jokes.remove(id)
+    const deleted_id = req.params.id
+    Jokes.remove(deleted_id)
         .then((_joke) => {
             if (!_joke) {
                 res.status(404).json({ messege: 'sorry.. joke doesnt exist with that id... whomp whomp...' })
             } else {
-                res.status(200).json({ messege: 'Joke has been Deleted Successfully!', _joke})
+                res.status(200).json({ messege: 'Joke has been Deleted Successfully!', deleted_id})
             }
         }).catch(() => {
             res.status(500).json({ messege: 'something went terribly wrong... contact the author' })
