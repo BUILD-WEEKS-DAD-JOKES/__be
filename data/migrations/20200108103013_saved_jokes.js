@@ -2,9 +2,9 @@
 exports.up = function (knex) {
     return knex.schema.createTable('saved_joke', tbl => {
         tbl.increments()
-        tbl.integer('user_id')
+        tbl.string('username')
             .notNullable()
-            .references('id')
+            .references('username')
             .inTable('user')
             .onDelete('CASCADE')
             .onUpdate('CASCADE')

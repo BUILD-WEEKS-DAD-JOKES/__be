@@ -5,7 +5,15 @@ exports.seed = function(knex) {
     .then(function () {
       // Inserts seed entries
       return knex('saved_joke').insert([
-        {user_id:1, joke_id:1},
+        {username:'DadBOT101', joke_id:1},
+        {username:'DadBOT203', joke_id:3},
+        {username:'DadBOT101', joke_id:5},
+        {username:'DadBOT204', joke_id:3},
+        {username:'DadBOT203', joke_id:2},
+        {username:'DadBOT101', joke_id:1},
+        {username:'DadBOT203', joke_id:4},
+        {username:'DadBOT204', joke_id:6},
+        {username:'DadBOT203', joke_id:9},
       ]);
     });
 };
