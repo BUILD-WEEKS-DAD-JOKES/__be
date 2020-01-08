@@ -36,7 +36,7 @@ router.post('/:user_id/:joke_id', privateRoute, (req, res) => {
         if (!_joke) {
             res.status(404).json({ messege: 'sorry... theres no jokes... whomp whomp...' })
         } else {
-            res.status(201).json(_joke)
+            res.status(201).json({messege:'saved success..', joke:_joke})
         }
     }).catch(() => {
         res.status(500).json({ messege: 'something went terribly wrong... contact the author' })
@@ -44,16 +44,16 @@ router.post('/:user_id/:joke_id', privateRoute, (req, res) => {
     })
 })
 
-router.get('/saved/:id', privateRoute, (req, res) => {
-    const {id} = req.params
-    Jokes.getSaved(id).then((_joke) => {
+router.get('/saved/:username', privateRoute, (req, res) => {
+    const {username} = req.params
+    Jokes.getSaved(username).then((_joke) => {
         if (!_joke) {
             res.status(404).json({ messege: 'sorry... theres no jokes... whomp whomp...' })
         } else {
             res.status(200).json(_joke)
         }
-    }).catch(() => {
-        res.status(500).json({ messege: 'something went terribly wrong... contact the author' })
+    }).catch((err) => {
+        res.status(500).json({ messege: 'something went terribly wrong... contact the author' ,err })
 
     })
 })

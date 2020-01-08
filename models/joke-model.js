@@ -22,16 +22,23 @@ function findPublic() {
 function add(joke) {
     return db('joke').insert(joke)
 }
-
+function findSavedById(id) {
+    return db('saved_joke').where({ id }).first()
+}
 function saveJoke(username, joke_id) {
-    return db('saved_joke').insert({username, joke_id})
+    return db('saved_joke')
+        .insert({ username, joke_id })
+        .then(() => {
+            return findSavedById(joke_id)
+        }).then((joke) => {
+            return findById(joke.id)
+        })
 }
 
 function getSaved(username) {
-    return db('joke as j')
-        .join('saved_joke as s', 's.id', 'j.id')
-        .where({ username })
-        .select('j.question', 'j.answer', 'j.joke_owner', 'j.thumb_ups', 'j.thumb_downs', 'j.hearts')
+    return db('saved_joke as s').where({username})
+    .join('joke as j', 'j.id', 's.joke_id')
+    .select('j.id as joke_id', 'j.question', 'j.thumb_ups', 'j.thumb_downs', 'j.joke_owner', 'j.hearts')
 }
 
 function remove(id) {
