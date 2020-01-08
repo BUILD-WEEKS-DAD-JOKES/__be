@@ -29,6 +29,34 @@ router.get('/all', privateRoute, (req, res) => {
 
     })
 })
+
+router.post('/:user_id/:joke_id', privateRoute, (req, res) => {
+    const {user_id, joke_id} = req.params
+    Jokes.saveJoke(user_id, joke_id).then((_joke) => {
+        if (!_joke) {
+            res.status(404).json({ messege: 'sorry... theres no jokes... whomp whomp...' })
+        } else {
+            res.status(200).json(_joke)
+        }
+    }).catch(() => {
+        res.status(500).json({ messege: 'something went terribly wrong... contact the author' })
+
+    })
+})
+
+router.get('/saved/:id', privateRoute, (req, res) => {
+    const {id} = req.params
+    Jokes.getSaved(id).then((_joke) => {
+        if (!_joke) {
+            res.status(404).json({ messege: 'sorry... theres no jokes... whomp whomp...' })
+        } else {
+            res.status(200).json(_joke)
+        }
+    }).catch(() => {
+        res.status(500).json({ messege: 'something went terribly wrong... contact the author' })
+
+    })
+})
 //changed to a /:user_id so that we can add the id to the post request, and simplfy things on the front end
 router.post('/:username', privateRoute, (req, res) => {
     let joke = req.body

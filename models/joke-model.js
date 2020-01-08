@@ -5,7 +5,9 @@ module.exports = {
     findPublic,
     add,
     remove,
-    update
+    update,
+    saveJoke,
+    getSaved
 }
 function find() {
     return db('joke')
@@ -19,6 +21,17 @@ function findPublic() {
 
 function add(joke) {
     return db('joke').insert(joke)
+}
+
+function saveJoke(user_id, joke_id) {
+    return db('saved_joke').insert({user_id, joke_id})
+}
+
+function getSaved(user_id) {
+    return db('joke as j')
+        .join('saved_joke as s', 's.id', 'j.id')
+        .where({ user_id })
+        .select('j.question', 'j.answer', 'j.joke_owner', 'j.thumb_ups', 'j.thumb_downs', 'j.hearts')
 }
 
 function remove(id) {
