@@ -99,7 +99,7 @@ router.put('/:id', privateRoute, (req, res) => {
             if (!_joke) {
                 res.status(404).json({ messege: 'sorry.. somethings mixed up... whomp whomp...' })
             } else {
-                res.status(200).json({ messege: 'Joke has been updated Successfully!' })
+                res.status(200).json({ messege: 'Joke has been updated Successfully!', _joke })
             }
         })
         .catch(() => {
