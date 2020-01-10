@@ -797,7 +797,7 @@ describe('PUT :: /api/jokes/:id', () => {
         //send the request to add the joke to the database with the authorization we need...
         res = await req(server).put(`/api/jokes/${jokes[2].id}`).set({ Authorization: token }).send(mock_changes)
         //now that we updated it in the database we expect that we get a confirm Messege response
-        expect(res.body).toEqual({ messege: 'Joke has been updated Successfully!' })
+        expect(res.body.messege).toEqual('Joke has been updated Successfully!')
     })
 })
 
@@ -921,7 +921,7 @@ describe('DELETE :: /api/jokes/:id', () => {
         //send the request to add the joke to the database with the authorization we need...
         res = await req(server).delete(`/api/jokes/${jokes[2].id}`).set({ Authorization: token }).send(mock_changes)
         //now that we updated it in the database we expect that we get a confirm Messege response
-        expect(res.body).toEqual({ messege: 'Joke has been Deleted Successfully!' })
+        expect(res.body.messege).toEqual('Joke has been Deleted Successfully!')
     })
 })
 //#endregion

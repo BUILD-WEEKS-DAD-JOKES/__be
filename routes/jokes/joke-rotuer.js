@@ -30,9 +30,9 @@ router.get('/all', privateRoute, (req, res) => {
     })
 })
 
-router.post('/:user_id/:joke_id', privateRoute, (req, res) => {
-    const {user_id, joke_id} = req.params
-    Jokes.saveJoke(user_id, joke_id).then((_joke) => {
+router.post('/:username/:joke_id', privateRoute, (req, res) => {
+    const {username, joke_id} = req.params
+    Jokes.saveJoke(username, joke_id).then((_joke) => {
         if (!_joke) {
             res.status(404).json({ messege: 'sorry... theres no jokes... whomp whomp...' })
         } else {
