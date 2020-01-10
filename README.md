@@ -1,5 +1,7 @@
 ## Dad Jokes API 
 
+### BASE URL :: https://dad-jokes--api.herokuapp.com/
+
 # AUTH
 
 ## these are the endpoints used for authenticating users
