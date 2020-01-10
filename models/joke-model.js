@@ -36,16 +36,15 @@ function saveJoke(username, joke_id) {
 }
 
 function getSaved(username) {
-    return db('saved_joke as s').where({username})
-    .join('joke as j', 'j.id', 's.joke_id')
-    .select('j.id as joke_id', 'j.question', 'j.thumb_ups', 'j.thumb_downs', 'j.joke_owner', 'j.hearts')
+    return db('saved_joke as s').where({ username })
+        .join('joke as j', 'j.id', 's.joke_id')
+        .select('j.id as joke_id', 'j.question', 'j.thumb_ups', 'j.thumb_downs', 'j.joke_owner', 'j.hearts')
 }
 
 function remove(id) {
     return db('joke').where({ id }).del()
 }
 function update(id, changes) {
-    return db('joke').update(changes).where({ id }).then(ids => {
-        return findById(ids)
-    })
+    return db('joke').update(changes).where({ id })
 }
+
